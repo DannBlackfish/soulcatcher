@@ -3,6 +3,8 @@ var canvas = document.getElementById('canvas')
 ctx = canvas.getContext('2d')
 
 let frames = 0
+let enemy = []
+let crash = false
 let velocity = 3
 
 window.onload = function(){
@@ -20,7 +22,9 @@ function updateCanvas(){
   ctx.clearRect(0, 0, 800, 500)
   backgroundImg.dibujar()
   frames++
+  gravedad();
   characterNew.draw();
+  updateEnemies();
   requestAnimationFrame(updateCanvas) 
 }
 
@@ -38,7 +42,7 @@ const backgroundImg = {
   },
   dibujar : function(){
     ctx.drawImage(this.img,this.x,this.y, canvas.width, canvas.height)
-    ctx.drawImage(this.img,this.x,this.y-canvas.height, canvas.width, canvas.height)
+    ctx.drawImage(this.img,this.x,this.y,canvas.width, canvas.height)
   }
 }
 
@@ -67,6 +71,15 @@ class Component {
         const ctx = gameArea.context;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
+    crash(enemies){
+      console.log(enemies)
+      return (
+        this.abajo() < enemies.arriba() ||
+        this.arriba() > enemies.abajo()||
+        this.derecha() < enemies.izquierda()||
+        this.izquierda() > enemies.derecha()
+      )
+    }
 }
 
 class Player extends Component{
@@ -89,6 +102,59 @@ class Player extends Component{
   moveRight(){
     this.x+=10
   }
+  moveUp(){
+    this.y-=10
+  }
+  moveDown(){
+    this.y+=10
+  }
+  jump(){
+    saltar
+  }
+}
+
+class Enemies extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    this.speedY = 0
+    const enemyRaw = new Image()
+    enemyRaw.src = "./images/bad-soul.gif"
+    window.addEventListener("load",()=>{
+      this.enemyimg = enemyRaw
+      this.draw()
+    })
+  }
+  draw(){
+    ctx.draw(this.enemyimg, this.x, this.y,this.width,this.height)
+  }
+  newPos(){
+    this.y += this.speedY
+  }
+}
+
+let enemyNew = new Enemies(25,20,10,10)
+let yi = 10
+function enemigos(){
+  let base_image = new Image()
+  base_image.src = "images/bad-soul.gif"
+  base_image.onload = function(){ 
+  ctx.drawImage(base_image, yi, 10,25,20);
+  }
+}
+
+function updateEnemies(){
+  for(let i=0; i<enemy.length; i++){
+    enemy[i].y += velocity
+    enemy[i].draw()
+    console.log(enemy)
+  }
+  if(frames%80 === 0){
+    let minWidth = 10
+    let maxWidth = 50
+    let width = Math.floor(Math.random()*(maxWidth-minWidth)) + minWidth
+    let position = Math.floor(Math.random()*canvas.width-width)
+    enemy.push(new Enemies(width,12,position,0))
+  }
 }
 
 
@@ -102,6 +168,36 @@ function players(){
   }
 }
 
+var personaje = {y: 20, vy:0, gravedad:2, salto:28, vymax:9, saltando: false}
+
+//--------------------------------------------------
+//BUCLE PRINCIPAL
+var FPS = 50;
+setInterval(function(){
+  updateCanvas()
+},1000/10)
+//--------------------------------------------------
+function saltar(){
+  personaje.saltando = true;
+  personaje.vy = personaje.salto
+
+}
+
+function gravedad(){
+  if(personaje.saltando == true){
+    if(trex.y > 20){
+      personaje.saltando = false;
+      personaje.vy = 0;
+      personaje.y = 20
+    }
+    else{
+      personaje.vy -= personaje.gravedad
+      personaje.y -= personaje.vy
+    }
+  }
+}
+
+
 /////////Listeners/////////
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode){
@@ -111,5 +207,17 @@ document.addEventListener('keydown', (e) => {
     case 39:
     characterNew.moveRight()
       break
+    case 38:
+    characterNew.moveUp()
+      break
+    case 40:
+    characterNew.moveDown()
+      break 
+    case 32:
+    characterNew.jump()
+      break
     }
+
     });
+
+ 
