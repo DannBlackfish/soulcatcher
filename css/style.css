@@ -46,8 +46,10 @@ body {
     padding: 0px;
 }
 
-.btn-center img {
-    margin: auto;
+#btn-center img {
+    margin-top: 20px;
+    margin-right: auto;
+    margin-left: auto;
     display: block;
     padding: 0px;
     width: 400px;
@@ -62,6 +64,12 @@ body {
     background-color: #E9ABCD;
 }
 
-.start-canvas {
-    border: 1px solid black;
+#canvas {
+    border: 1px solid red;
+    width: 800px;
+    height: 500px;
+    background:rgb(253, 195, 244);
+    position: absolute;
+    top: 343px;
+    left: 400px;
 }

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel=StyleSheet href="css/style.css" type="text/css" media=screen>
-    
 </head>
 <body>
     <div class="container"> <!--Contenedor de logo-->
@@ -19,13 +18,16 @@
         </div>
         <div class="start-game" ><!--"Start Game"-->  
                 <img src="images/background-2.gif">
-            <div class="btn-center">
+            <div id="btn-center">
                 <img src ="images/button-start-game.png">
             </div>
         </div>
         <div class="score"><!--Score-->  
         </div>
     </div>
-    <script src="./index.js" type="text-javascript"></script>
+    <div>
+        <canvas id="canvas" width="500" height="300"></canvas>
+    </div>
+    <script type="text/javascript" src="javascript/main.js"></script>
 </body>
 </html>
