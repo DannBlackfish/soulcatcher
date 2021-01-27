@@ -18,11 +18,9 @@ window.onload = function(){
 }
 
 function updateCanvas(){
-  console.log(frames)
   ctx.clearRect(0, 0, 800, 500)
   backgroundImg.dibujar()
   frames++
-  gravedad();
   characterNew.draw();
   updateEnemies();
   requestAnimationFrame(updateCanvas) 
@@ -72,7 +70,6 @@ class Component {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
     crash(enemies){
-      console.log(enemies)
       return (
         this.abajo() < enemies.arriba() ||
         this.arriba() > enemies.abajo()||
@@ -86,6 +83,11 @@ class Player extends Component{
     constructor(width,height,x,y){
       super(width,height,x,y)
       this.speedx = 0
+      this.saltando= false
+      this.salto=28
+      this.vy=0
+
+
       const playerRaw = new Image()
       playerRaw.src = "./images/character.gif"
       window.addEventListener("load",()=>{
@@ -109,7 +111,50 @@ class Player extends Component{
     this.y+=10
   }
   jump(){
-    this.y=saltar
+    this.saltando = true;
+    this.vy = personaje.salto;
+    this.y-=this.vy
+  do {
+  
+  } while (vy<9);
+  }
+  gravedad(){
+    if (this.saltando==true){
+      if(vy==9){
+        console.log("Me detengo")
+      }
+      console.log("soy la gravedad")
+    }
+  }
+}
+
+let personaje = {y: 200, vy:0, gravedad:2, salto:28, vymax:9, saltando: false}
+
+/*
+function players(){
+  let base_image = new Image()
+  base_image.src = "images/character.gif"
+  base_image.onload = function(){ 
+  ctx.drawImage(base_image, 200, personaje.y, 58, 90);  
+  }  
+}
+*/
+
+function saltar(){
+  personaje.saltando = true;
+  personaje.vy = personaje.salto;
+}
+function gravedad(){
+  if(personaje.saltando == true){
+    if(personaje.y > 200){
+      personaje.saltando = false;
+      personaje.vy = 0;
+      personaje.y = 200
+    }
+    else{
+      personaje.vy -= personaje.gravedad
+      personaje.y -= personaje.vy
+    }
   }
 }
 
@@ -158,32 +203,7 @@ function updateEnemies(){
 }
 
 let characterNew = new Player(58,90,200,100)
-let xi = 200
-let personaje = {y: 200, vy:0, gravedad:2, salto:28, vymax:9, saltando: false}
-function players(){
-  let base_image = new Image()
-  base_image.src = "images/character.gif"
-  base_image.onload = function(){ 
-  ctx.drawImage(base_image,xi,personaje.y,58,90);
-  }  
-}
-function saltar(){
-  personaje.saltando = true;
-  personaje.vy = personaje.salto;
-}
-function gravedad(){
-  if(personaje.saltando == true){
-    if(personaje.y > 200){
-      personaje.saltando = false;
-      personaje.vy = 0;
-      personaje.y = 200
-    }
-    else{
-      personaje.vy -= personaje.gravedad
-      personaje.y -= personaje.vy
-    }
-  }
-}
+
 
 /*
 var FPS = 10;
