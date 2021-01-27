@@ -110,67 +110,42 @@ class Player extends Component{
   moveDown(){
     this.y+=10
   }
-  jump(){
-    this.saltando = true;
-    this.vy = personaje.salto;
-    this.y-=this.vy
-  do {
-  
-  } while (vy<9);
+  jump () {
+    this.saltando = true
   }
-  gravedad(){
-    if (this.saltando==true){
-      if(vy==9){
-        console.log("Me detengo")
+  gravedad(){      
+    if(this.saltando === true){
+      if(this.vy < 30){
+        this.vy += 10
+        this.y -= this.vy
+        return
       }
-      console.log("soy la gravedad")
-    }
+      if(this.vy === 30) {
+        this.vy += 30
+        this.y = this.vy + this.y
+        return
+      }
+      this.vy = 0
+    } 
+    this.saltando = false
+    return
   }
 }
 
-let personaje = {y: 200, vy:0, gravedad:2, salto:28, vymax:9, saltando: false}
 
-/*
-function players(){
-  let base_image = new Image()
-  base_image.src = "images/character.gif"
-  base_image.onload = function(){ 
-  ctx.drawImage(base_image, 200, personaje.y, 58, 90);  
-  }  
-}
-*/
-
-function saltar(){
-  personaje.saltando = true;
-  personaje.vy = personaje.salto;
-}
-function gravedad(){
-  if(personaje.saltando == true){
-    if(personaje.y > 200){
-      personaje.saltando = false;
-      personaje.vy = 0;
-      personaje.y = 200
-    }
-    else{
-      personaje.vy -= personaje.gravedad
-      personaje.y -= personaje.vy
-    }
-  }
-}
 
 class Enemies extends Component{
   constructor(width,height,x,y){
     super(width,height,x,y)
     this.speedY = 0
-    const enemyRaw = new Image()
-    enemyRaw.src = "./images/bad-soul.gif"
+    this.enemyRaw = new Image()
+    this.enemyRaw.src = "./images/bad-soul.gif"
     window.addEventListener("load",()=>{
-      this.enemyimg = enemyRaw
       this.draw()
     })
   }
   draw(){
-    ctx.fillRect( this.x, this.y,this.width,this.height)
+    ctx.drawImage(this.enemyRaw,this.x, this.y,this.width,this.height)
   }
   newPos(){
     this.y += this.speedY
@@ -202,15 +177,8 @@ function updateEnemies(){
   }
 }
 
-let characterNew = new Player(58,90,200,100)
+let characterNew = new Player(58,90,200,200)
 
-
-/*
-var FPS = 10;
-setInterval(function(){
-  updateCanvas()
-},1000/FPS)
-*/
 
 /////////Listeners/////////
 document.addEventListener('keydown', (e) => {
