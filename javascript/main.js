@@ -109,7 +109,7 @@ class Player extends Component{
     this.y+=10
   }
   jump(){
-    saltar
+    this.y=saltar
   }
 }
 
@@ -125,7 +125,7 @@ class Enemies extends Component{
     })
   }
   draw(){
-    ctx.draw(this.enemyimg, this.x, this.y,this.width,this.height)
+    ctx.fillRect( this.x, this.y,this.width,this.height)
   }
   newPos(){
     this.y += this.speedY
@@ -157,38 +157,26 @@ function updateEnemies(){
   }
 }
 
-
-let characterNew = new Player(58,90,200,200)
+let characterNew = new Player(58,90,200,100)
 let xi = 200
+let personaje = {y: 200, vy:0, gravedad:2, salto:28, vymax:9, saltando: false}
 function players(){
   let base_image = new Image()
   base_image.src = "images/character.gif"
   base_image.onload = function(){ 
-  ctx.drawImage(base_image, xi, 200,58,90);
-  }
+  ctx.drawImage(base_image,xi,personaje.y,58,90);
+  }  
 }
-
-var personaje = {y: 20, vy:0, gravedad:2, salto:28, vymax:9, saltando: false}
-
-//--------------------------------------------------
-//BUCLE PRINCIPAL
-var FPS = 50;
-setInterval(function(){
-  updateCanvas()
-},1000/10)
-//--------------------------------------------------
 function saltar(){
   personaje.saltando = true;
-  personaje.vy = personaje.salto
-
+  personaje.vy = personaje.salto;
 }
-
 function gravedad(){
   if(personaje.saltando == true){
-    if(trex.y > 20){
+    if(personaje.y > 200){
       personaje.saltando = false;
       personaje.vy = 0;
-      personaje.y = 20
+      personaje.y = 200
     }
     else{
       personaje.vy -= personaje.gravedad
@@ -197,6 +185,12 @@ function gravedad(){
   }
 }
 
+/*
+var FPS = 10;
+setInterval(function(){
+  updateCanvas()
+},1000/FPS)
+*/
 
 /////////Listeners/////////
 document.addEventListener('keydown', (e) => {
@@ -217,7 +211,6 @@ document.addEventListener('keydown', (e) => {
     characterNew.jump()
       break
     }
-
     });
 
  
