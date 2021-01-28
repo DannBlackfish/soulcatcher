@@ -3,24 +3,22 @@ body {
     margin: 0px;
     padding: 0px;
 }
-
 .container{
-    display: flex;
     margin: 0;
     padding: 0;
-    width: 1500px;
+    width: 1200px;
     height: 300px;
+    padding: 0 50px 0 50px;
     display: block;
 }
-
 .container2{
     display: flex;
     margin: 0;
-    padding: 0;
-    width: 1500px;
+    padding: 0 50px 0 50px;
+    width: 1200px;
     height: 780px;
+    justify-content: space-around;
 }
-
 .logo {
     width: 800px;
     margin-top: 45px;
@@ -30,32 +28,66 @@ body {
     display: block;
     padding: 0px;
 }
-
 .instructions img {
     width: 300px;
     height: 500px;
-    margin: 0px 20px 20px 100px;
+    margin: 0px 20px 20px 0px;
     padding: 0px;
-    background-color: rgb(123, 128, 123);
+    background-color: #C19AB3;
 }
-
 .start-game img{
-    width: 600px;
+    width: 800px;
     height: 500px;
     margin: 0px 20px 0px 25px;
     padding: 0px;
 }
-
-#btn-center img {
+.background-toHide {
+    visibility: visible;
+}
+.staring {
+    visibility: hidden;
+    width: 800px;
+    margin: 0px 20px 0px 50px;
+    padding: 0px;
+}
+#btn-center {
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
+}
+.no-background {
+    background-color: #C19AB3;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+}
+#btn-center img {
     margin-right: auto;
     margin-left: auto;
     display: block;
-    padding: 0px;
     width: 400px;
     height: auto;
+    cursor: pointer;
 }
-
+#btn-center-dos {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+#btn-center-dos img {
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+    width: 400px;
+    height: auto;
+    cursor: pointer;
+}
+.staring-dos {
+    visibility: hidden;
+    width: 800px;
+    margin: 0px 20px 0px 50px;
+    padding: 0px;
+}
 .score {
     width: 300px;
     height: 500px;
@@ -63,9 +95,7 @@ body {
     padding: 0px;
     background-color: #E9ABCD;
 }
-
 #canvas {
-    border: 1px solid red;
     width: 800px;
     height: 500px;
     background:rgb(253, 195, 244);

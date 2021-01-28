@@ -16,17 +16,25 @@
         <div class="instructions"><!--Contenedor instrucciones-->
             <img class="instrucciones-img" src ="images/instrucciones.jpg">
         </div>
-        <div class="start-game" ><!--"Start Game"-->  
-                <img src="images/background-2.gif">
-            <div id="btn-center">
-                <img src ="images/button-start-game.png">
-            </div>
+        <div>
+            
         </div>
-        <div class="score"><!--Score-->  
+        <div class="start-game" ><!--"Start Game"-->
+                <img class="background-toHide"src="images/background-2.gif">
+                <div class="staring">
+                    <canvas id="canvas" width="500" height="300"></canvas>
+                </div>
+                <div id="btn-center">
+                    <button onclick="showCanvas(), hideBackground()" class="no-background">
+                        <img src ="images/button-start-game.png">
+                    </button>
+                </div>
+                <div id="btn-center-dos">
+                    <button onclick="showCanvas(), hideBackground()" class="no-background">
+                        <img src ="images/botón_5.png">
+                    </button>
+                </div>
         </div>
-    </div>
-    <div>
-        <canvas id="canvas" width="500" height="300"></canvas>
     </div>
     <script type="text/javascript" src="javascript/main.js"></script>
 </body>

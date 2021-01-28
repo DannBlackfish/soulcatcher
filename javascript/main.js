@@ -8,7 +8,13 @@ let crash = false;
 let velocity = 3;
 let soul = [];
 let score = 0;
-let vida = 10;
+let vida = 3;
+let scoreUp = new Audio();
+scoreUp.src = './audio/score-up.mp3'
+let scoreDown = new Audio();
+scoreDown.src = './audio/crash.mp3'
+let music = new Audio();
+//music.src = './audio/music.mp3'
 //------------------------------------------//
 window.onload = function(){
   document.getElementById('btn-center').onclick = () => {
@@ -16,23 +22,26 @@ window.onload = function(){
   }
   function startGame() {
     backgroundImg.dibujar()
-    updateCanvas()
+    updateCanvas();
+    music.play();
   } 
 }
 //------------------------------------------//
 function updateCanvas(){
-  ctx.clearRect(0, 0, 800, 500)
+  ctx.clearRect(800, 500, 0, 0)
   backgroundImg.dibujar()
   frames++
   characterNew.draw();
   heartNew.draw();
-  heartdosNew.draw();
-  heartresNew.draw();
   updateEnemies();
   updateSouls();
   sumaScore();
-  fondoGameOverNew.draw()
   requestAnimationFrame(updateCanvas)
+}
+function updateMusicaFondo(){
+  const audio = new Audio()
+  audio.src = './musica/musicaFondo.mp3'
+  audio.loop = true;
 }
 //------------------------------------------//
 function updateEnemies(){
@@ -108,30 +117,36 @@ class Component {
         this.y + this.height > soul.y
       )
     }
-    isTouching(characterNew) {
-      return (
-        this.x < characterNew.x + characterNew.width &&
-        this.x + this.width > characterNew.x &&
-        this.y < characterNew.y + characterNew.height &&
-        this.y + this.height > characterNew.y
-      )
-    }
-    fondoFinal(fondoGameOverNew){
-      return fondoGameOverNew.draw()
-    }
 }
 //------------------------------------------//
-function tocarPared(){
-  let dx=800
-  let dy=500
-  let x=0
-  let y=0
-  if(x + dx > canvas.width-characterNew.isTouching  || x + dx < characterNew.isTouching ) {
-    dx = -dx;
+function showCanvas() {
+  const theCanvas = document.querySelector('.staring-dos')
+  if (vida===0){
+
+  }
+  if (theCanvas.style.visibility === 'hidden') {
+    theCanvas.style.visibility = 'visible'
+  } else {
+    theCanvas.style.visibility = 'visible'
+  }
 }
-  if(y + dy > canvas.height-characterNew.isTouching  || y + dy < characterNew.isTouching ) {
-  dy = -dy;
+//------------------------------------------//
+function showCanvas() {
+  const theCanvas = document.querySelector('.staring')
+  if (theCanvas.style.visibility === 'hidden') {
+    theCanvas.style.visibility = 'visible'
+  } else {
+    theCanvas.style.visibility = 'visible'
+  }
 }
+//------------------------------------------//
+function hideBackground () {
+  const theBackground = document.querySelector('.background-toHide')
+  if (theBackground.style.visibility === 'visible') {
+    theBackground.style.visibility = 'hidden'
+  } else {
+    theBackground.style.visibility = 'hidden'
+  }
 }
 //------------------------------------------//
 function checkCollition() {
@@ -139,33 +154,23 @@ function checkCollition() {
     return characterNew.isTouching(obstacle)
   })
   if (crashEnemy){
+    scoreDown.play();
     score -=10
+    vida--
     let filter = enemy.filter(function(obstacle){
       return characterNew.isTouching(obstacle)
     })
     let index=enemy.indexOf(filter[0])
     enemy.splice(index,1)
   }
-/*
-    if (score<=-30) {
-      gameOver();
-    }
-  */
 }
-
-
-/*
-function gameOver() {
-    fondoFinal.stop()
-    //location.reload()
-}
-*/
 //------------------------------------------//
 function sumaScore() {
   const crashSoul = soul.some(function(obstacle){
     return characterNew.isTouching(obstacle)
   })
   if (crashSoul){
+    scoreUp.play()
     score +=10
     let filter = soul.filter(function(obstacle){
       return characterNew.isTouching(obstacle)
@@ -179,22 +184,6 @@ function sumaScore() {
   ctx.fillText(`Score: ${score}`, 350, 50);
 }
 //------------------------------------------//
-/*
-function eliminarVida() {
-  const quitarVida = heartNew.some(function(obstacle){
-    return characterNew.isTouching(obstacle)
-  })
-  if (quitarVida){
-    score -=10
-    let filter = heartNew.filter(function(obstacle){
-      return characterNew.isTouching(obstacle)
-    })
-    let index=heartNew.indexOf(filter[0])
-    heartNew.splice(index,1)
-  }
-}
-*/
-//------------------------------------------//
 class GameOver extends Component{
   constructor(width,height,x,y){
     super(width,height,x,y)
@@ -206,73 +195,30 @@ class GameOver extends Component{
     })
   }
   draw(){
+    if(vida===0)this.fondoGameOverRaw.src="./images/background-7.gif"
     ctx.drawImage(this.fondoGameOverRaw,this.x, this.y,this.width,this.height)
   }
 }
-let fondoGameOverNew = new GameOver (0,0,800,500)
+let fondoGameOverNew = new GameOver (800,500,0,0)
 //------------------------------------------//
 class Heart extends Component{
   constructor(width,height,x,y){
     super(width,height,x,y)
     this.speedY = 0
     this.heartRaw = new Image()
-    this.heartRaw.src = "./images/vida.png"
+    this.heartRaw.src = "./images/heart-3.png"
     window.addEventListener("load",()=>{
       this.draw()
     })
   }
   draw(){
+    if(vida===3)this.heartRaw.src="./images/heart-3.png"
+    if(vida===2)this.heartRaw.src="./images/heart-2.png"
+    if(vida===1)this.heartRaw.src="./images/heart-1.png"
     ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
-  }
-  quitarCorazon(score) {
-    if (score=-10) {
-      heartNew.delete
-    }
   }
 }
 let heartNew = new Heart (20,20,400,50)
-//------------------------------------------//
-class Heartdos extends Component{
-  constructor(width,height,x,y){
-    super(width,height,x,y)
-    this.speedY = 0
-    this.heartRaw = new Image()
-    this.heartRaw.src = "./images/vida.png"
-    window.addEventListener("load",()=>{
-      this.draw()
-    })
-  }
-  draw(){
-    ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
-  }
-  quitarCorazon(score) {
-    if (score=-20) {
-      heartdosNew.delete
-    }
-  }
-}
-let heartdosNew = new Heartdos (20,20,420,50)
-//------------------------------------------//
-class Heartres extends Component{
-  constructor(width,height,x,y){
-    super(width,height,x,y)
-    this.speedY = 0
-    this.heartRaw = new Image()
-    this.heartRaw.src = "./images/vida.png"
-    window.addEventListener("load",()=>{
-      this.draw()
-    })
-  }
-  draw(){
-    ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
-  }
-  quitarCorazon(score) {
-    if (score=-30) {
-      heartresNew.delete
-    }
-  }
-}
-let heartresNew = new Heartres (20,20,440,50)
 //------------------------------------------//
 class Player extends Component{
     constructor(width,height,x,y){
@@ -282,7 +228,7 @@ class Player extends Component{
       this.salto=28
       this.vy=0
       const playerRaw = new Image()
-      playerRaw.src = "./images/character.gif"
+      playerRaw.src = "./images/character.png"
       window.addEventListener("load",()=>{
         this.playerimg = playerRaw
         this.draw()
@@ -318,13 +264,14 @@ class Player extends Component{
     return
   }
 }
+let characterNew = new Player(58,90,200,200)
 //------------------------------------------//
 class Enemies extends Component{
   constructor(width,height,x,y){
     super(width,height,x,y)
     this.speedY = 0
     this.enemyRaw = new Image()
-    this.enemyRaw.src = "./images/bad-soul.gif"
+    this.enemyRaw.src = "./images/bad-soul.png"
     window.addEventListener("load",()=>{
       this.draw()
     })
@@ -342,7 +289,7 @@ class Souls extends Component{
     super(width,height,x,y)
     this.speedY = 0
     this.soulRaw = new Image()
-    this.soulRaw.src = "./images/good-soul.gif"
+    this.soulRaw.src = "./images/good-soul.png"
     window.addEventListener("load",()=>{
       this.draw()
     })
@@ -355,10 +302,6 @@ class Souls extends Component{
   }
 }
 //------------------------------------------//
-let characterNew = new Player(58,90,200,200)
-//------------------------------------------//
-
-/////////Listeners/////////
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode){
     case 37:
