@@ -2,10 +2,13 @@
 var canvas = document.getElementById('canvas')
 ctx = canvas.getContext('2d')
 //------------------------------------------//
-let frames = 0
-let enemy = []
-let crash = false
-let velocity = 3
+let frames = 0;
+let enemy = [];
+let crash = false;
+let velocity = 3;
+let soul = [];
+let score = 0;
+let vida = 10;
 //------------------------------------------//
 window.onload = function(){
   document.getElementById('btn-center').onclick = () => {
@@ -14,7 +17,7 @@ window.onload = function(){
   function startGame() {
     backgroundImg.dibujar()
     updateCanvas()
-  }  
+  } 
 }
 //------------------------------------------//
 function updateCanvas(){
@@ -22,8 +25,14 @@ function updateCanvas(){
   backgroundImg.dibujar()
   frames++
   characterNew.draw();
+  heartNew.draw();
+  heartdosNew.draw();
+  heartresNew.draw();
   updateEnemies();
-  requestAnimationFrame(updateCanvas) 
+  updateSouls();
+  sumaScore();
+  fondoGameOverNew.draw()
+  requestAnimationFrame(updateCanvas)
 }
 //------------------------------------------//
 function updateEnemies(){
@@ -38,6 +47,22 @@ function updateEnemies(){
     let width = Math.floor(Math.random()*(maxWidth-minWidth)) + minWidth
     let position = Math.floor(Math.random()*canvas.width-width)
     enemy.push(new Enemies(width,12,position,0))
+  }
+  checkCollition()
+}
+//------------------------------------------//
+function updateSouls(){
+  for(let i=0; i<soul.length; i++){
+    soul[i].y += velocity
+    soul[i].draw()
+    console.log(soul)
+  }
+  if(frames%100 === 0){
+    let minWidth = 10
+    let maxWidth = 50
+    let width = Math.floor(Math.random()*(maxWidth-minWidth)) + minWidth
+    let position = Math.floor(Math.random()*canvas.width-width)
+    soul.push(new Souls(width,12,position,0))
   }
 }
 //------------------------------------------//
@@ -55,7 +80,6 @@ const backgroundImg = {
   },
   dibujar : function(){
     ctx.drawImage(this.img,this.x,this.y, canvas.width, canvas.height)
-    ctx.drawImage(this.img,this.x,this.y,canvas.width, canvas.height)
   }
 }
 //------------------------------------------//
@@ -68,31 +92,187 @@ class Component {
         this.speedX = 0
         this.speedY = 0
     }
-    izquierda(){
-      return this.x
-    }
-    derecha(){
-      return this.x + this.width
-    }
-    arriba(){
-      return this.y
-    }
-    abajo(){
-      return this.y + this.height
-    }
-    update() {
-        const ctx = gameArea.context;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-    crash(enemies){
+    isTouching(enemy) {
       return (
-        this.abajo() < enemies.arriba() ||
-        this.arriba() > enemies.abajo()||
-        this.derecha() < enemies.izquierda()||
-        this.izquierda() > enemies.derecha()
+        this.x < enemy.x + enemy.width &&
+        this.x + this.width > enemy.x &&
+        this.y < enemy.y + enemy.height &&
+        this.y + this.height > enemy.y
       )
     }
+    isTouching(soul) {
+      return (
+        this.x < soul.x + soul.width &&
+        this.x + this.width > soul.x &&
+        this.y < soul.y + soul.height &&
+        this.y + this.height > soul.y
+      )
+    }
+    isTouching(characterNew) {
+      return (
+        this.x < characterNew.x + characterNew.width &&
+        this.x + this.width > characterNew.x &&
+        this.y < characterNew.y + characterNew.height &&
+        this.y + this.height > characterNew.y
+      )
+    }
+    fondoFinal(fondoGameOverNew){
+      return fondoGameOverNew.draw()
+    }
 }
+//------------------------------------------//
+function tocarPared(){
+  let dx=800
+  let dy=500
+  let x=0
+  let y=0
+  if(x + dx > canvas.width-characterNew.isTouching  || x + dx < characterNew.isTouching ) {
+    dx = -dx;
+}
+  if(y + dy > canvas.height-characterNew.isTouching  || y + dy < characterNew.isTouching ) {
+  dy = -dy;
+}
+}
+//------------------------------------------//
+function checkCollition() {
+  const crashEnemy = enemy.some(function(obstacle){
+    return characterNew.isTouching(obstacle)
+  })
+  if (crashEnemy){
+    score -=10
+    let filter = enemy.filter(function(obstacle){
+      return characterNew.isTouching(obstacle)
+    })
+    let index=enemy.indexOf(filter[0])
+    enemy.splice(index,1)
+  }
+/*
+    if (score<=-30) {
+      gameOver();
+    }
+  */
+}
+
+
+/*
+function gameOver() {
+    fondoFinal.stop()
+    //location.reload()
+}
+*/
+//------------------------------------------//
+function sumaScore() {
+  const crashSoul = soul.some(function(obstacle){
+    return characterNew.isTouching(obstacle)
+  })
+  if (crashSoul){
+    score +=10
+    let filter = soul.filter(function(obstacle){
+      return characterNew.isTouching(obstacle)
+    })
+    let index=soul.indexOf(filter[0])
+    soul.splice(index,1)
+  }
+  ctx.font = '18px serif';
+  ctx.fillStyle = 'black';
+  ctx.fill= '#0095DD'
+  ctx.fillText(`Score: ${score}`, 350, 50);
+}
+//------------------------------------------//
+/*
+function eliminarVida() {
+  const quitarVida = heartNew.some(function(obstacle){
+    return characterNew.isTouching(obstacle)
+  })
+  if (quitarVida){
+    score -=10
+    let filter = heartNew.filter(function(obstacle){
+      return characterNew.isTouching(obstacle)
+    })
+    let index=heartNew.indexOf(filter[0])
+    heartNew.splice(index,1)
+  }
+}
+*/
+//------------------------------------------//
+class GameOver extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    this.speedY = 0
+    this.fondoGameOverRaw = new Image()
+    this.fondoGameOverRaw.src = "./images/background-7.gif"
+    window.addEventListener("load",()=>{
+      this.draw()
+    })
+  }
+  draw(){
+    ctx.drawImage(this.fondoGameOverRaw,this.x, this.y,this.width,this.height)
+  }
+}
+let fondoGameOverNew = new GameOver (0,0,800,500)
+//------------------------------------------//
+class Heart extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    this.speedY = 0
+    this.heartRaw = new Image()
+    this.heartRaw.src = "./images/vida.png"
+    window.addEventListener("load",()=>{
+      this.draw()
+    })
+  }
+  draw(){
+    ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
+  }
+  quitarCorazon(score) {
+    if (score=-10) {
+      heartNew.delete
+    }
+  }
+}
+let heartNew = new Heart (20,20,400,50)
+//------------------------------------------//
+class Heartdos extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    this.speedY = 0
+    this.heartRaw = new Image()
+    this.heartRaw.src = "./images/vida.png"
+    window.addEventListener("load",()=>{
+      this.draw()
+    })
+  }
+  draw(){
+    ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
+  }
+  quitarCorazon(score) {
+    if (score=-20) {
+      heartdosNew.delete
+    }
+  }
+}
+let heartdosNew = new Heartdos (20,20,420,50)
+//------------------------------------------//
+class Heartres extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    this.speedY = 0
+    this.heartRaw = new Image()
+    this.heartRaw.src = "./images/vida.png"
+    window.addEventListener("load",()=>{
+      this.draw()
+    })
+  }
+  draw(){
+    ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
+  }
+  quitarCorazon(score) {
+    if (score=-30) {
+      heartresNew.delete
+    }
+  }
+}
+let heartresNew = new Heartres (20,20,440,50)
 //------------------------------------------//
 class Player extends Component{
     constructor(width,height,x,y){
@@ -157,17 +337,27 @@ class Enemies extends Component{
   }
 }
 //------------------------------------------//
-let characterNew = new Player(58,90,200,200)
-//------------------------------------------//
-let enemyNew = new Enemies(25,20,10,10)
-let yi = 10
-function enemigos(){
-  let base_image = new Image()
-  base_image.src = "images/bad-soul.gif"
-  base_image.onload = function(){ 
-  ctx.drawImage(base_image, yi, 10,25,20);
+class Souls extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    this.speedY = 0
+    this.soulRaw = new Image()
+    this.soulRaw.src = "./images/good-soul.gif"
+    window.addEventListener("load",()=>{
+      this.draw()
+    })
+  }
+  draw(){
+    ctx.drawImage(this.soulRaw,this.x, this.y,this.width,this.height)
+  }
+  newPos(){
+    this.y += this.speedY
   }
 }
+//------------------------------------------//
+let characterNew = new Player(58,90,200,200)
+//------------------------------------------//
+
 /////////Listeners/////////
 document.addEventListener('keydown', (e) => {
   switch (e.keyCode){
