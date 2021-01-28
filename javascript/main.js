@@ -14,7 +14,7 @@ scoreUp.src = './audio/score-up.mp3'
 let scoreDown = new Audio();
 scoreDown.src = './audio/crash.mp3'
 let music = new Audio();
-//music.src = './audio/music.mp3'
+music.src = './audio/music.mp3'
 //------------------------------------------//
 window.onload = function(){
   document.getElementById('btn-center').onclick = () => {
@@ -51,11 +51,14 @@ function updateEnemies(){
     console.log(enemy)
   }
   if(frames%80 === 0){
-    let minWidth = 10
+    let minWidth = 20
     let maxWidth = 50
+    let minHeight = 20
+    let maxHeight = 50
     let width = Math.floor(Math.random()*(maxWidth-minWidth)) + minWidth
-    let position = Math.floor(Math.random()*canvas.width-width)
-    enemy.push(new Enemies(width,12,position,0))
+    let height = Math.floor(Math.random()*(maxHeight-minHeight)) + minHeight
+    let position = Math.floor(Math.random()*canvas.width-width+Math.random()*canvas.height-height)
+    enemy.push(new Enemies(width,height,position,0))
   }
   checkCollition()
 }
@@ -67,7 +70,7 @@ function updateSouls(){
     console.log(soul)
   }
   if(frames%100 === 0){
-    let minWidth = 10
+    let minWidth = 20
     let maxWidth = 50
     let width = Math.floor(Math.random()*(maxWidth-minWidth)) + minWidth
     let position = Math.floor(Math.random()*canvas.width-width)
@@ -181,7 +184,7 @@ function sumaScore() {
   ctx.font = '18px serif';
   ctx.fillStyle = 'black';
   ctx.fill= '#0095DD'
-  ctx.fillText(`Score: ${score}`, 350, 50);
+  ctx.fillText(`Score: ${score}`, 400, 40);
 }
 //------------------------------------------//
 class GameOver extends Component{
@@ -218,7 +221,7 @@ class Heart extends Component{
     ctx.drawImage(this.heartRaw,this.x, this.y,this.width,this.height)
   }
 }
-let heartNew = new Heart (20,20,400,50)
+let heartNew = new Heart (77,20,400,50)
 //------------------------------------------//
 class Player extends Component{
     constructor(width,height,x,y){
@@ -238,10 +241,10 @@ class Player extends Component{
     ctx.drawImage(this.playerimg, this.x, this.y, this.width,this.height)
   }
   moveLeft(){
-    this.x-=10
+    this.x-=20
   }
   moveRight(){
-    this.x+=10
+    this.x+=20
   }
   jump () {
     this.saltando = true
