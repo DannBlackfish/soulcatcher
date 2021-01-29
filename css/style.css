@@ -41,26 +41,33 @@ body {
     margin: 0px 20px 0px 25px;
     padding: 0px;
 }
-.background-toHide {
-    visibility: visible;
-}
+
 .staring {
     visibility: hidden;
     width: 800px;
     margin: 0px 20px 0px 50px;
     padding: 0px;
 }
-#btn-center {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+
+.ending {
+    visibility: visible;
+    width: 800px;
+    margin: 0px 20px 0px 50px;
+    padding: 0px;
 }
-.no-background {
+
+.fondo-de-boton {
     background-color: #C19AB3;
     border: none;
     text-align: center;
     text-decoration: none;
 }
+#btn-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 #btn-center img {
     margin-right: auto;
     margin-left: auto;
@@ -82,12 +89,6 @@ body {
     height: auto;
     cursor: pointer;
 }
-.staring-dos {
-    visibility: hidden;
-    width: 800px;
-    margin: 0px 20px 0px 50px;
-    padding: 0px;
-}
 .score {
     width: 300px;
     height: 500px;
@@ -98,8 +99,7 @@ body {
 #canvas {
     width: 800px;
     height: 500px;
-    background:rgb(253, 195, 244);
     position: absolute;
-    top: 343px;
-    left: 400px;
+    top: 346px;
+    left: 424px;
 }

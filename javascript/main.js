@@ -21,11 +21,14 @@ window.onload = function(){
     startGame();
   }
   function startGame() {
-    backgroundImg.dibujar()
-    updateCanvas();
-    music.play();
+  backgroundImg.dibujar()
+  updateCanvas();
+  music.play();
   } 
 }
+document.getElementById("btn-center-dos").addEventListener("click", function() {
+  document.location.reload();
+});
 //------------------------------------------//
 function updateCanvas(){
   ctx.clearRect(800, 500, 0, 0)
@@ -36,8 +39,10 @@ function updateCanvas(){
   updateEnemies();
   updateSouls();
   sumaScore();
+  backgroundOver.draw();
   requestAnimationFrame(updateCanvas)
 }
+
 function updateMusicaFondo(){
   const audio = new Audio()
   audio.src = './musica/musicaFondo.mp3'
@@ -72,9 +77,12 @@ function updateSouls(){
   if(frames%100 === 0){
     let minWidth = 20
     let maxWidth = 50
+    let minHeight = 20
+    let maxHeight = 50
     let width = Math.floor(Math.random()*(maxWidth-minWidth)) + minWidth
+    let height = Math.floor(Math.random()*(maxHeight-minHeight)) + minHeight
     let position = Math.floor(Math.random()*canvas.width-width)
-    soul.push(new Souls(width,12,position,0))
+    soul.push(new Souls(width,height,position,0))
   }
 }
 //------------------------------------------//
@@ -122,35 +130,27 @@ class Component {
     }
 }
 //------------------------------------------//
-function showCanvas() {
-  const theCanvas = document.querySelector('.staring-dos')
-  if (vida===0){
+class Backgroundgame extends Component{
+  constructor(width,height,x,y){
+    super(width,height,x,y)
+    const backgroundRaw = new Image()
+    backgroundRaw.src = "./images/background-7.gif"
+    window.addEventListener("load",()=>{
+      this.backgroundimg = backgroundRaw
+      this.draw()
+    })
+  }
+draw(){
+  if(vida===0){
+    music.pause();
+    this.backgroundimg.src="./images/background-7.gif";
+    ctx.drawImage(this.backgroundimg, this.x, this.y, this.width,this.height);
+    clearInterval(startGame);
+    }
+  }
+}
+let backgroundOver = new Backgroundgame (500,300,0,0)
 
-  }
-  if (theCanvas.style.visibility === 'hidden') {
-    theCanvas.style.visibility = 'visible'
-  } else {
-    theCanvas.style.visibility = 'visible'
-  }
-}
-//------------------------------------------//
-function showCanvas() {
-  const theCanvas = document.querySelector('.staring')
-  if (theCanvas.style.visibility === 'hidden') {
-    theCanvas.style.visibility = 'visible'
-  } else {
-    theCanvas.style.visibility = 'visible'
-  }
-}
-//------------------------------------------//
-function hideBackground () {
-  const theBackground = document.querySelector('.background-toHide')
-  if (theBackground.style.visibility === 'visible') {
-    theBackground.style.visibility = 'hidden'
-  } else {
-    theBackground.style.visibility = 'hidden'
-  }
-}
 //------------------------------------------//
 function checkCollition() {
   const crashEnemy = enemy.some(function(obstacle){
@@ -159,7 +159,7 @@ function checkCollition() {
   if (crashEnemy){
     scoreDown.play();
     score -=10
-    vida--
+    vida -= 1
     let filter = enemy.filter(function(obstacle){
       return characterNew.isTouching(obstacle)
     })
@@ -169,6 +169,7 @@ function checkCollition() {
 }
 //------------------------------------------//
 function sumaScore() {
+  let color = 'white'
   const crashSoul = soul.some(function(obstacle){
     return characterNew.isTouching(obstacle)
   })
@@ -181,28 +182,14 @@ function sumaScore() {
     let index=soul.indexOf(filter[0])
     soul.splice(index,1)
   }
-  ctx.font = '18px serif';
-  ctx.fillStyle = 'black';
-  ctx.fill= '#0095DD'
+  ctx.font = '18px arial';
+  ctx.fillStyle = 'white';
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
+  ctx.shadowBlur = 2;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
   ctx.fillText(`Score: ${score}`, 400, 40);
 }
-//------------------------------------------//
-class GameOver extends Component{
-  constructor(width,height,x,y){
-    super(width,height,x,y)
-    this.speedY = 0
-    this.fondoGameOverRaw = new Image()
-    this.fondoGameOverRaw.src = "./images/background-7.gif"
-    window.addEventListener("load",()=>{
-      this.draw()
-    })
-  }
-  draw(){
-    if(vida===0)this.fondoGameOverRaw.src="./images/background-7.gif"
-    ctx.drawImage(this.fondoGameOverRaw,this.x, this.y,this.width,this.height)
-  }
-}
-let fondoGameOverNew = new GameOver (800,500,0,0)
 //------------------------------------------//
 class Heart extends Component{
   constructor(width,height,x,y){
